@@ -3,7 +3,7 @@ function [respRect] = graphPresent(player, trialSet, iTrial, window, dist, color
 gap = 150;
 
 you   = 'YOU';
-other = sprintf('#%i', trialSet(iTrial).p2ID);
+other = sprintf('#%i', trialSet(iTrial).otherID);
 
 Screen('TextSize', window, floor(dist / 10));
 switch trialSet(iTrial).pos
@@ -53,7 +53,7 @@ switch player
         p1IconColor  = colors.out;
         p2IconColor  = colors.in;
         p1           = 'P1';
-        p2           = sprintf('P2 (#%i)', trialSet(iTrial).p2ID);
+        p2           = sprintf('P2 (#%i)', trialSet(iTrial).otherID);
         switch trialSet(iTrial).trialKeys 
             case 'comp'
                 pOne     = perIc;
@@ -68,7 +68,7 @@ switch player
         pTwoRect     = pOneIconRect;
         p1IconColor  = colors.in;
         p2IconColor  = colors.out;
-        p1           = sprintf('P1 (#%i)', trialSet(iTrial).p2ID);
+        p1           = sprintf('P1 (#%i)', trialSet(iTrial).otherID);
         p2           = 'P2';
         pOne         = perIc;
         pTwo         = perIc;
@@ -76,7 +76,7 @@ end
 
 
 
-inRect     = CenterRectOnPointd(baseRect, coOrdinates.inDots(1, 3) - xDist / 5, coOrdinates.inDots(2, 3) - dist / 2)
+inRect     = CenterRectOnPointd(baseRect, coOrdinates.inDots(1, 3) - xDist / 5, coOrdinates.inDots(2, 3) - dist / 2);
 outRect    = CenterRectOnPointd(baseRect, coOrdinates.inDots(1, 3) - 2 * xDist + xDist / 5, coOrdinates.inDots(2, 3) - dist / 2);
 
 youRect    = pOneRect;
@@ -109,10 +109,10 @@ DrawFormattedText(window, other, 'center', 'center', p2IconColor, [], [], [], []
 DrawFormattedText(window, p1, 'center', 'center', p1Color, [], [], [], [], [], p1Rect);
 DrawFormattedText(window, p2, 'center', 'center', p2Color, [], [], [], [], [], p2Rect);
 
-Screen('DrawLines', window, coOrdinates.outLines, 10, colors.out)
-Screen('DrawLines', window, coOrdinates.inLines, 10, colors.in)
-Screen('DrawDots', window, coOrdinates.outDots, 15, colors.out, [], 3)
-Screen('DrawDots', window, coOrdinates.inDots, 15, colors.in, [], 3)
+Screen('DrawLines', window, coOrdinates.outLines, 10, colors.out);
+Screen('DrawLines', window, coOrdinates.inLines, 10, colors.in);
+Screen('DrawDots', window, coOrdinates.outDots, 15, colors.out, [], 3);
+Screen('DrawDots', window, coOrdinates.inDots, 15, colors.in, [], 3);
 
 
 Screen('FrameRect', window, colors.out, sVRect, penWidthPixels);

@@ -3,8 +3,8 @@ function [trialSet, flag] = responseGet(player, trialSet, iTrial, window, dist, 
 while toc(timer) - trialSet(iTrial).scenOnset < durations.present
     [~, ~, buttons, ~, ~, ~] = GetMouse(window);
     if buttons(2)
-        break
         sca;
+        break
     end
     while flag
         if toc(timer) - trialSet(iTrial).scenOnset > durations.present && isempty(trialSet(iTrial).subResp)
