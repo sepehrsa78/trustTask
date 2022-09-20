@@ -1,6 +1,6 @@
 function [respRect] = graphPresent(player, trialSet, iTrial, window, dist, colors, center, icon, penWidthPixels)
 
-gap = 150;
+gap = dist / 265 * 150;
 
 you   = 'YOU';
 other = sprintf('#%i', trialSet(iTrial).otherID);
@@ -30,7 +30,7 @@ coOrdinates.inDots   = [xCenter + 2 * xDist, xCenter, xCenter + xDist; yCenter +
 coOrdinates.outLines = [coOrdinates.outDots, coOrdinates.outDots(:, 2), coOrdinates.inDots(:, 3)];
 coOrdinates.inLines  = [coOrdinates.inDots(:, 3), coOrdinates.inDots(:, 2), coOrdinates.inDots(:, 3), coOrdinates.inDots(:, 1)];
 
-baseRect     = [0 0 dist / 1.7 dist / 2.5];
+baseRect     = [0 0 dist / 2.5 dist / 2.5];
 
 pOneIconRect = [xCenter - pOneW / 2, yCenter - pOneH / 2 - dist / 1.7 - gap,...
                 xCenter + pOneH / 2, yCenter + pOneH / 2 - dist / 1.7 - gap];
@@ -88,9 +88,9 @@ sVRect   = CenterRectOnPointd(baseRect, coOrdinates.inDots(1, 1), coOrdinates.in
 r1VRect  = CenterRectOnPointd(baseRect, coOrdinates.inDots(1, 2), coOrdinates.inDots(2, 2) + dist / 3);
 p1VRect  = CenterRectOnPointd(baseRect, coOrdinates.outDots(1, 1), coOrdinates.outDots(2, 1) + dist / 3);
 
-tVRect   = CenterRectOnPointd(baseRect, coOrdinates.inDots(1, 1), coOrdinates.inDots(2, 1) + dist);
-r2VRect  = CenterRectOnPointd(baseRect, coOrdinates.inDots(1, 2), coOrdinates.inDots(2, 2) + dist);
-p2VRect  = CenterRectOnPointd(baseRect, coOrdinates.outDots(1, 1), coOrdinates.outDots(2, 1) + dist);
+tVRect   = CenterRectOnPointd(baseRect, coOrdinates.inDots(1, 1), coOrdinates.inDots(2, 1) + 1.1 * dist);
+r2VRect  = CenterRectOnPointd(baseRect, coOrdinates.inDots(1, 2), coOrdinates.inDots(2, 2) + 1.1 * dist);
+p2VRect  = CenterRectOnPointd(baseRect, coOrdinates.outDots(1, 1), coOrdinates.outDots(2, 1) + 1.1 * dist);
 
 respRect.in     = inRect;
 respRect.out    = outRect;

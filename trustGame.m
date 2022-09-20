@@ -7,6 +7,7 @@ clc
 
 addpath('funcs', 'imgs', 'imgs/intro', 'imgs/intro/hum', 'utils')
 path = pwd;
+rand('seed', sum(100 * clock));
 %% Subject Information
 
 prompt      = {'Subject Name:', 'Subject ID:', 'Demo:', 'Eye Tracker', 'Gender:', 'Age:', 'Player 1 or 2:', 'Save Data:'};
@@ -21,12 +22,7 @@ params.isFirst      = true;
 params.respToBeMade = false;
 params.isAllowed    = false;
 params.isSave       = true;
-if answer{7, 1} == '1'
-    params.cond         = reshape(repmat({'comp', 'human'}, [36 1]), [72, 1]);
-else
-    params.cond         = repmat({'human'}, [72 1]);
-end
-params.pos          = reshape(repmat({'left', 'right'}, [18 2]), [72, 1]);
+
 %% Task Parameters and Constants
 
 PsychDefaultSetup(2);
@@ -42,6 +38,18 @@ if answer{3, 1} == '1'
 else
     numTrials  = 72;
 end
+if answer{7, 1} == '2'
+    numTrials = 36
+end
+
+if answer{7, 1} == '1'
+    params.cond         = reshape(repmat({'comp', 'human'}, [36 1]), [72, 1]);
+    params.pos          = reshape(repmat({'left', 'right'}, [18 2]), [72, 1]);
+else
+    params.cond         = repmat({'human'}, [36 1]);
+    params.pos          = reshape(repmat({'left', 'right'}, [18 1]), [36, 1]);
+end
+
 
 for timT = 1:numTrials
     fixate(timT) = (4000 + randi(300)) / 1000;
@@ -52,11 +60,11 @@ end
 durations.fixation   = fixate;
 durations.intro      = 2;
 durations.present    = 8;
-durations.miss       = 1;
+% durations.miss       = 1;
 
 
 monitorHeight   = 200;                                                      % in milimeters
-monitorDistance = 270;                                                      % in milimeters
+monitorDistance = 200;                                                      % in milimeters
 
 screenNumber    = 0;
 resolution      = Screen('Resolution', screenNumber);
@@ -77,7 +85,7 @@ keyBoard.rightKey  = KbName('RightArrow');
 colors.in  = hex2rgb('#5EFB6E');
 colors.out = hex2rgb('#728FCE');
 
-dist            = ang2pix(7, monitorDistance, monitorHeight / screenHeight);
+dist            = ang2pix(13, monitorDistance, monitorHeight / screenHeight);
 penWidthPixels  = dist / 25;
 icons.person     = 'per.png';
 icons.computer   = 'computer.png';
@@ -108,19 +116,24 @@ center.xCenter      = xCenter;
 center.yCenter      = yCenter;
 
 fixCross = [xCenter - 2, yCenter - 10, xCenter + 2, yCenter + 10; ...
-            xCenter - 10, yCenter - 2, xCenter + 10, yCenter + 2];
+    xCenter - 10, yCenter - 2, xCenter + 10, yCenter + 2];
 fixCrossColor = WhiteIndex(screenNumber);
 fixInf.shape = fixCross';
 fixInf.color = fixCrossColor;
 %% Loading the Values & Images
 
-valueTable = readtable('payoffs2.xlsx', 'Format', 'auto', 'ReadVariableNames', true);
-valueTable = vertcat(valueTable, valueTable);
-
 stimDir       = 'imgs/intro/hum';
 humanFaces    = deblank(natsortfiles(string(ls(fullfile(pwd, stimDir, '*.png')))));
 computerImage = icons.computer;
 numID         = extractBetween(humanFaces, '_', '.png');
+
+valueTable = readtable('payoffs2.xlsx', 'Format', 'auto', 'ReadVariableNames', true);
+if answer{7, 1} == '1'
+    valueTable = vertcat(valueTable, valueTable);
+else
+    humanFaces = humanFaces(1:36);
+    numID      = numID(1:36);
+end
 
 stimNames    = [humanFaces; computerImage];
 stimTextures = containers.Map;
@@ -192,7 +205,6 @@ if answer{4, 1} == '1'
 end
 %% Task Body
 
-rand('seed', sum(100 * clock));
 timer = tic;
 iTrial = 0;
 params.isAllowed = true;
@@ -219,7 +231,7 @@ while iTrial <= numTrials
     end
 
     introRect = [xCenter - elemSizes.humanWidth / 2, yCenter + elemSizes.humanHeight / 1.6,...
-                 xCenter + elemSizes.humanWidth / 2, yCenter + elemSizes.humanHeight / 1.6];
+        xCenter + elemSizes.humanWidth / 2, yCenter + elemSizes.humanHeight / 1.6];
     if strcmp(trialSet(iTrial).trialKeys, 'comp')
         Screen('DrawTexture', window, trialSet(iTrial).otherImage, [], [], 0, [], [], colors.in);
         DrawFormattedText(window, sprintf('#%i', trialSet(iTrial).otherID), 'center', 'center', colors.in, ...
@@ -229,10 +241,10 @@ while iTrial <= numTrials
     else
         if answer{7, 1} == '1'
             DrawFormattedText(window, sprintf('#%i', trialSet(iTrial).otherID), 'center', 'center', colors.in, ...
-            [], [], [], [], [], introRect);
+                [], [], [], [], [], introRect);
         else
             DrawFormattedText(window, sprintf('#%i', trialSet(iTrial).otherID), 'center', 'center', colors.out, ...
-            [], [], [], [], [], introRect);
+                [], [], [], [], [], introRect);
         end
         Screen('DrawTexture', window, trialSet(iTrial).otherImage, [], [], 0);
         Screen('Flip', window);
@@ -245,15 +257,16 @@ while iTrial <= numTrials
     trialSet(iTrial).scenOnset = toc(timer);
 
     params.respToBeMade = true;
-   [trialSet, params.respToBeMade] = responseGet(answer{7, 1}, trialSet, iTrial, window, dist, colors, center, icons, ...
-                                                penWidthPixels, respRect, durations, timer, keyBoard, fixInf, params.respToBeMade);
+    [trialSet, params.respToBeMade] = responseGet(answer{7, 1}, trialSet, iTrial, window, dist, colors, center, icons, ...
+        penWidthPixels, respRect, durations, timer, keyBoard, fixInf, params.respToBeMade);
 end
 
-if ~ params.isAllowed 
+if ~ params.isAllowed
     Prompt_Start = 'Task Finished';
     DrawFormattedText(window, Prompt_Start,...
         'center', 'center', WhiteIndex(screenNumber) / 2);
     Screen('Flip', window);
+    WaitSecs(1);
     sca;
 end
 
